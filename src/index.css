@@ -154,13 +154,16 @@ body {
 
 .sorts p {
   font-size: 1rem;
+  color: #087f5b;
 }
 
 .sorts select {
   padding: 0.4rem 0.8rem;
+  font-size: 0.9rem;
   border: none;
   outline: none;
   background-color: #fff;
+  color: #087f5b;
   border-radius: 0.4rem;
   cursor: pointer;
 }
