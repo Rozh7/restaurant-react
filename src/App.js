@@ -1,6 +1,11 @@
 import { useState } from "react";
+import Home from "./Home";
+import Logo from "./Logo";
+import Meals from "./Meals";
+import Main from "./Main";
+import Orders from "./Orders";
 
-const meals = [
+export const meals = [
   { name: "Breakfast", image: "./images/home/breakfast.png" },
   { name: "Lunch", image: "./images/home/lunch.png" },
   { name: "Dinner", image: "./images/home/dinner.png" },
@@ -9,7 +14,7 @@ const meals = [
   { name: "Diet", image: "./images/home/diet.png" },
 ];
 
-const lunch = [
+export const lunch = [
   { name: "Pizza", price: 11, image: "./images/foods/Pizza.jpg" },
   { name: "Kntaki", price: 21, image: "./images/foods/Kntaki.jpg" },
   { name: "Kabab", price: 43, image: "./images/foods/Kabab.jpg" },
@@ -34,7 +39,7 @@ const lunch = [
   { name: "Finger", price: 4, image: "./images/foods/Finger.jpg" },
 ];
 
-const breakfast = [
+export const breakfast = [
   { name: "Strawbery", price: 3, image: "./images/Breakfast/Bayani 1.jpg" },
   { name: "Coffee", price: 9, image: "./images/Breakfast/Bayani 2.jpg" },
   { name: "Fruits", price: 5, image: "./images/Breakfast/Bayani 3.jpg" },
@@ -53,7 +58,7 @@ const breakfast = [
     image: "./images/Breakfast/Bayani 8.jpg",
   },
 ];
-const dinner = [
+export const dinner = [
   { name: "Hot Chiken", price: 11, image: "./images/Dinner/1.jpg" },
   { name: "Tomato and Egg", price: 1, image: "./images/Dinner/2.jpg" },
   { name: "Sup", price: 14, image: "./images/Dinner/3.jpg" },
@@ -71,7 +76,7 @@ const dinner = [
     image: "./images/Dinner/8.jpg",
   },
 ];
-const appetizers = [
+export const appetizers = [
   { name: "Shrin", price: 21, image: "./images/Appetizers/1.jpg" },
   { name: "Nasti", price: 19, image: "./images/Appetizers/2.jpg" },
   { name: "Shars", price: 12, image: "./images/Appetizers/3.jpg" },
@@ -153,12 +158,21 @@ export default function App() {
         makeDefault={makeDefault}
         defaultMeal={defaultMeal}
         selectedMeal={selectedMeal}
-      ></Home>
+      >
+        <Logo />
+        <Meals
+          makeDefault={makeDefault}
+          selectedMeal={selectedMeal}
+          defaultMeal={defaultMeal}
+        ></Meals>
+      </Home>
+
       <Main
         handleAddFood={handleAddFood}
         handleSearch={handleSearch}
         defaultMeal={defaultMeal}
       ></Main>
+
       <Orders
         orders={orders}
         subtotal={subtotal}
@@ -170,230 +184,5 @@ export default function App() {
         removeOrder={removeOrder}
       ></Orders>
     </div>
-  );
-}
-
-function Home({ makeDefault, selectedMeal, defaultMeal }) {
-  return (
-    <div className="home">
-      <Logo></Logo>
-      <Meals
-        makeDefault={makeDefault}
-        selectedMeal={selectedMeal}
-        defaultMeal={defaultMeal}
-      ></Meals>
-    </div>
-  );
-}
-
-function Logo() {
-  return <h1>Restaurant Logo</h1>;
-}
-
-function Meals({ makeDefault, selectedMeal, defaultMeal }) {
-  return (
-    <ul className="lists">
-      {meals.map((meal) => (
-        <Meal
-          meal={meal}
-          key={meal.name}
-          makeDefault={makeDefault}
-          selectedMeal={selectedMeal}
-          defaultMeal={defaultMeal}
-        ></Meal>
-      ))}
-    </ul>
-  );
-}
-
-function Meal({ meal, makeDefault, selectedMeal, defaultMeal }) {
-  return (
-    <li>
-      <button
-        className={
-          defaultMeal === meal.name ? "right-back meal--button" : "meal--button"
-        }
-        onClick={() => makeDefault(meal.name)}
-      >
-        <img src={meal.image} alt={meal.name} />
-        <span>{meal.name}</span>
-      </button>
-    </li>
-  );
-}
-function Main({ handleAddFood, handleSearch, defaultMeal }) {
-  const [sorted, setSorted] = useState("default");
-  let foodSelect;
-  let sortFood;
-  if (defaultMeal === "Breakfast") foodSelect = breakfast;
-  if (defaultMeal === "Lunch") foodSelect = lunch;
-  if (defaultMeal === "Dinner") foodSelect = dinner;
-  if (defaultMeal === "Appetizers") foodSelect = appetizers;
-
-  if (sorted === "default") sortFood = foodSelect;
-  if (sorted === "high")
-    sortFood = foodSelect.slice().sort((a, b) => a.price - b.price);
-
-  if (sorted === "low")
-    sortFood = foodSelect.slice().sort((a, b) => b.price - a.price);
-  function onSearch(e) {
-    handleSearch(e);
-  }
-
-  return (
-    <div className="main">
-      <div className="main--top">
-        <div>
-          <input
-            type="text"
-            placeholder="Search for what do you need?"
-            onChange={(e) => onSearch(e.target.value)}
-          ></input>
-          <button className="search">Search</button>
-        </div>
-        <span className="date">{new Date().toLocaleDateString()}</span>
-      </div>
-      <div className="sorts">
-        <p>Sorted by</p>
-        <select value={sorted} onChange={(e) => setSorted(e.target.value)}>
-          <option value="default">Default</option>
-          <option value="high">Low to high</option>
-          <option value="low">High to low</option>
-        </select>
-      </div>
-      <ul className="lists--food">
-        {sortFood ? (
-          sortFood.map((food) => (
-            <Food
-              food={food}
-              key={food.name}
-              handleAddFood={handleAddFood}
-            ></Food>
-          ))
-        ) : (
-          <p>Sorry there is no {defaultMeal}!</p>
-        )}
-      </ul>
-    </div>
-  );
-}
-
-function Food({ food, handleAddFood }) {
-  const [foods, setFood] = useState(food.name);
-  const [image, SetImage] = useState(food.image);
-  const [price, setPrice] = useState(food.price);
-  function addFood() {
-    setFood(food.name);
-    SetImage(food.image);
-    setPrice(food.price);
-    const newFood = {
-      foods,
-      image,
-      id: Date.now(),
-      quantity: 1,
-      price,
-    };
-    handleAddFood(newFood);
-  }
-
-  return (
-    <li>
-      <img src={food.image} alt={food.name} />
-      <>
-        <h3>{food.name}</h3>
-        <div>
-          <span>${food.price}</span>
-          <button
-            className="add"
-            onClick={() => {
-              addFood();
-            }}
-          >
-            Add
-          </button>
-        </div>
-      </>
-    </li>
-  );
-}
-function Orders({
-  orders,
-  subtotal,
-  total,
-  service,
-  setOrder,
-  handleAddQuantity,
-  handleRemoveQuantity,
-  removeOrder,
-}) {
-  return (
-    <div className="order">
-      <h2>Orders List</h2>
-      <ul className="order--lists">
-        {orders.map((order) => (
-          <Order
-            order={order}
-            key={order.id}
-            handleAddQuantity={handleAddQuantity}
-            handleRemoveQuantity={handleRemoveQuantity}
-            removeOrder={removeOrder}
-          ></Order>
-        ))}
-      </ul>
-      <div className="order--price">
-        <div className="subtotal">
-          <span className="sub--total">Subtotal: ${subtotal.toFixed(2)}</span>
-          <span className="service">Service: {service.toFixed(2)}%</span>
-        </div>
-        <div className="cancel">
-          <Total total={total} />
-          <Clear setOrder={setOrder} total={total} />
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function Order({
-  order,
-  handleAddQuantity,
-  handleRemoveQuantity,
-  removeOrder,
-}) {
-  function onAddFood() {
-    handleAddQuantity(order);
-  }
-
-  function onRemoveFood() {
-    if (order.quantity > 1) handleRemoveQuantity(order);
-    else removeOrder(order);
-  }
-  return (
-    <li>
-      <img src={order.image} alt={order.name} />
-      <div className="orders--names">
-        <h4>{order.foods}</h4>
-        <div className="adds">
-          <span>${order.orderPrice > 0 ? order.orderPrice : order.price}</span>
-          <div className="btns">
-            <button onClick={onRemoveFood}>-</button>
-            <span>{order.quantity}</span>
-            <button onClick={onAddFood}>+</button>
-          </div>
-        </div>
-      </div>
-    </li>
-  );
-}
-
-function Total({ total }) {
-  return <h1>Total: ${total.toFixed(2)}</h1>;
-}
-
-function Clear({ setOrder, total }) {
-  return total > 0 ? (
-    <button onClick={() => setOrder([])}>Cancel Order</button>
-  ) : (
-    ""
   );
 }
