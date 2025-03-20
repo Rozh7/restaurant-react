@@ -2,7 +2,12 @@ import { useState } from "react";
 import { breakfast, lunch, dinner, appetizers } from "./App";
 import Food from "./Food";
 
-export default function Main({ handleAddFood, handleSearch, defaultMeal }) {
+export default function Main({
+  handleAddFood,
+  handleSearch,
+  defaultMeal,
+  allFood,
+}) {
   const [sorted, setSorted] = useState("default");
   let foodSelect;
   let sortFood;
@@ -43,17 +48,21 @@ export default function Main({ handleAddFood, handleSearch, defaultMeal }) {
         </select>
       </div>
       <ul className="lists--food">
-        {sortFood ? (
-          sortFood.map((food) => (
-            <Food
-              food={food}
-              key={food.name}
-              handleAddFood={handleAddFood}
-            ></Food>
-          ))
-        ) : (
-          <p>Sorry there is no {defaultMeal}!</p>
-        )}
+        {allFood
+          ? allFood.map((food) => (
+              <Food
+                food={food}
+                key={`${food.name} - ${food.price}`}
+                handleAddFood={handleAddFood}
+              ></Food>
+            ))
+          : sortFood.map((food) => (
+              <Food
+                food={food}
+                key={food.name}
+                handleAddFood={handleAddFood}
+              ></Food>
+            ))}
       </ul>
     </div>
   );

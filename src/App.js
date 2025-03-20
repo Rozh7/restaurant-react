@@ -20,7 +20,7 @@ export const lunch = [
   { name: "Kabab", price: 43, image: "./images/foods/Kabab.jpg" },
   { name: "Burger", price: 6, image: "./images/foods/Burger.jpg" },
   { name: "Qozi", price: 2, image: "./images/foods/Qozi.jpg" },
-  { name: "Babaruni", price: 15, image: "./images/foods/Babaruni.jpg" },
+  { name: "Babaruni Pizza", price: 15, image: "./images/foods/Babaruni.jpg" },
   {
     name: "Sandawich Italy",
     price: 8,
@@ -40,7 +40,11 @@ export const lunch = [
 ];
 
 export const breakfast = [
-  { name: "Strawbery", price: 3, image: "./images/Breakfast/Bayani 1.jpg" },
+  {
+    name: "Strawbery and fruit",
+    price: 3,
+    image: "./images/Breakfast/Bayani 1.jpg",
+  },
   { name: "Coffee", price: 9, image: "./images/Breakfast/Bayani 2.jpg" },
   { name: "Fruits", price: 5, image: "./images/Breakfast/Bayani 3.jpg" },
   { name: "Eggs", price: 15, image: "./images/Breakfast/Bayani 4.jpg" },
@@ -48,7 +52,7 @@ export const breakfast = [
   { name: "Milkshake", price: 4, image: "./images/Breakfast/Bayani 6.jpg" },
 
   {
-    name: "Capochino",
+    name: "Coffee Capochino",
     price: 1,
     image: "./images/Breakfast/Bayani 7.jpg",
   },
@@ -84,8 +88,11 @@ export const appetizers = [
   { name: "Afri", price: 12, image: "./images/Appetizers/5.jpg" },
 ];
 
+const allFoods = [...lunch, ...breakfast, ...dinner, ...appetizers];
+
 export default function App() {
   const [orders, setOrder] = useState([]);
+  const [allFood, setAllFood] = useState(null);
   function removeOrder(ordered) {
     setOrder((orders) =>
       orders.slice().filter((order) => order.foods !== ordered.foods)
@@ -94,28 +101,26 @@ export default function App() {
   function handleAddFood(foods) {
     const orderExist = orders.some((order) => order.foods === foods.foods);
     if (!orderExist) setOrder((orders) => [...orders, foods]);
-    // else handleAddQuantity(foods);
+    else {
+      handleAddQuantity(foods);
+    }
   }
 
   function handleSearch(search) {
-    const word = search.toLowerCase().charAt(0).toUpperCase() + search.slice(1);
-    setOrder(
-      orders.filter((order) =>
-        order.foods === word ? { ...order, foods: word } : order
-      )
+    const word = search.toLowerCase();
+    setAllFood(
+      allFoods.slice().filter((food) => food.name.toLowerCase().includes(word))
     );
   }
 
   function handleAddQuantity(name) {
-    const quantity = name.quantity + 1;
-    const orderPrice = name.price * quantity;
     setOrder(
       orders.map((order) =>
         order.foods === name.foods
           ? {
               ...order,
-              quantity,
-              orderPrice,
+              quantity: order.quantity + 1,
+              orderPrice: (order.quantity + 1) * order.price,
             }
           : order
       )
@@ -154,11 +159,7 @@ export default function App() {
 
   return (
     <div className="app">
-      <Home
-        makeDefault={makeDefault}
-        defaultMeal={defaultMeal}
-        selectedMeal={selectedMeal}
-      >
+      <Home>
         <Logo />
         <Meals
           makeDefault={makeDefault}
@@ -171,6 +172,7 @@ export default function App() {
         handleAddFood={handleAddFood}
         handleSearch={handleSearch}
         defaultMeal={defaultMeal}
+        allFood={allFood}
       ></Main>
 
       <Orders
